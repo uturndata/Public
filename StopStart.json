@@ -66,7 +66,18 @@
   		  "wget -O $OPERATOR https://raw.githubusercontent.com/uturndata/Public/master/ec2_operator.py\n",
   		  "chown ec2-user:ec2-user $OPERATOR\n",
   		  "chmod 644 $OPERATOR\n",
-  		  "echo \"*/5 * * * * ec2-user python $OPERATOR > /home/ec2-user/ec2_operator.log 2>&1\" >> /etc/crontab\n"           
+  		  "echo \"*/5 * * * * ec2-user python $OPERATOR > /home/ec2-user/ec2_operator.log 2>&1\" >> /etc/crontab\n",
+        "pip install boto\n",
+        "SNAPSHOTCONFIG=/home/ec2-user/config.py\n",
+        "SNAPSHOT=/home/ec2-user/makesnapshots.py\n",
+
+        "wget -O $SNAPSHOTCONFIG https://raw.githubusercontent.com/uturndata/Public/master/config.py\n",
+        "wget -O $SNAPSHOT https://raw.githubusercontent.com/uturndata/Public/master/makesnapshots.py\n",
+        "chown ec2-user:ec2-user $SNAPSHOT\n",
+        "chmod 644 $SNAPSHOT\n",
+        "echo \"30 1 * * 1-5 ec2-user python $SNAPSHOT day > /home/ec2-user/makesnapshots.log 2>&1\" >> /etc/crontab\n",
+        "echo \"30 2 * * 6 ec2-user python $SNAPSHOT week > /home/ec2-user/makesnapshots.log 2>&1\" >> /etc/crontab\n",
+        "echo \"30 3 1 * * ec2-user python $SNAPSHOT month > /home/ec2-user/makesnapshots.log 2>&1\" >> /etc/crontab\n"
   		  ]]}}
 	     }
     },
@@ -107,7 +118,16 @@
                   "Action": [
 				            "ec2:DescribeInstances",
                     "ec2:StartInstances",
-                    "ec2:StopInstances"
+                    "ec2:StopInstances",
+                    "ec2:CreateSnapshot",
+                    "ec2:CreateTags",
+                    "ec2:DeleteSnapshot",
+                    "ec2:DescribeAvailabilityZones",
+                    "ec2:DescribeSnapshots",
+                    "ec2:DescribeTags",
+                    "ec2:DescribeVolumeAttribute",
+                    "ec2:DescribeVolumeStatus",
+                    "ec2:DescribeVolumes"
 				          ], 
                   "Effect": "Allow", 
                   "Resource": "*"
