@@ -70,7 +70,6 @@
         "pip install boto\n",
         "SNAPSHOTCONFIG=/home/ec2-user/config.py\n",
         "SNAPSHOT=/home/ec2-user/makesnapshots.py\n",
-
         "wget -O $SNAPSHOTCONFIG https://raw.githubusercontent.com/uturndata/Public/master/config.py\n",
         "wget -O $SNAPSHOT https://raw.githubusercontent.com/uturndata/Public/master/makesnapshots.py\n",
         "chown ec2-user:ec2-user $SNAPSHOT\n",
