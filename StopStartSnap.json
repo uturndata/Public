@@ -70,9 +70,12 @@
   		  "echo \"*/5 * * * * ec2-user python $OPERATOR > /home/ec2-user/ec2_operator.log 2>&1\" >> /etc/crontab\n",
         "pip install boto\n",
         "SNAPSHOTCONFIG=/home/ec2-user/config.py\n",
+        "SNAPSHOTCONFIGEX=/home/ec2-user/config.ex\n",
         "SNAPSHOT=/home/ec2-user/makesnapshots.py\n",
-        "wget -O $SNAPSHOTCONFIG https://raw.githubusercontent.com/uturndata/Public/master/config.py\n",
-        "echo \"'arn': '", { "Ref": "StopStartSnapServerSNS" },"'\" > /home/ec2-user/makesnapshots.log 2>&1\" >> $SNAPSHOTCONFIG\n",
+        "wget -O $SNAPSHOTCONFIGEX https://raw.githubusercontent.com/uturndata/Public/master/config.py\n",
+        "#echo \"'arn': '", { "Ref": "StopStartSnapServerSNS" },"' > /home/ec2-user/makesnapshots.log 2>&1\" >> $SNAPSHOTCONFIG\n",
+        "sed 's:ReplaceWithSNSARN:",{ "Ref": "StopStartSnapServerSNS" },":' $SNAPSHOTCONFIGEX > $SNAPSHOTCONFIG\n",
+        "rm $SNAPSHOTCONFIGEX\n"
         "wget -O $SNAPSHOT https://raw.githubusercontent.com/uturndata/Public/master/makesnapshots.py\n",
         "chown ec2-user:ec2-user $SNAPSHOT\n",
         "chmod 644 $SNAPSHOT\n",
@@ -93,7 +96,7 @@
       }, 
       "Type": "AWS::IAM::InstanceProfile"
     }, 	
-    "StopStartSnapServerDown": {
+    "ServerDown": {
             "Type": "AWS::CloudWatch::Alarm",
             "Properties": {
                 "AlarmDescription": "Server not available",
