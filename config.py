@@ -24,7 +24,7 @@ config = {
     'log_file': '/tmp/makesnapshots.log',
 
     # ARN of the SNS topic (optional)
-    #'arn': 'xxxxxxxxxx',
+    'arn': 'ReplaceWithSNSARN',
 
     # Proxy config (optional)
     #'proxyHost': '10.100.x.y',
