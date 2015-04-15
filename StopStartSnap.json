@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Launch an EC2 instance to perform auto-start, auto-stop instances and Snapshot ebs volumes in the same region.",
+  "Description" : "Launch an EC2 instance to perform auto-start, auto-stop of instances and Snapshot of ebs volumes.",
   "Parameters" : {
     "UtilSubnet" :{
        "Description" : "subnet ID for instance to run",
@@ -52,7 +52,7 @@
         "Tags" : [
           {
             "Key": "Name",
-            "Value": { "Fn::Join" : ["", ["Prod", { "Ref" : "AWS::StackName" }]]}
+            "Value": { "Fn::Join" : ["", ["Utility", { "Ref" : "AWS::StackName" }]]}
           },
           {
             "Key" : "Role",
@@ -73,9 +73,8 @@
         "SNAPSHOTCONFIGEX=/home/ec2-user/config.ex\n",
         "SNAPSHOT=/home/ec2-user/makesnapshots.py\n",
         "wget -O $SNAPSHOTCONFIGEX https://raw.githubusercontent.com/uturndata/Public/master/config.py\n",
-        "#echo \"'arn': '", { "Ref": "StopStartSnapServerSNS" },"' > /home/ec2-user/makesnapshots.log 2>&1\" >> $SNAPSHOTCONFIG\n",
-        "sed 's:ReplaceWithSNSARN:",{ "Ref": "StopStartSnapServerSNS" },":' $SNAPSHOTCONFIGEX > $SNAPSHOTCONFIG\n",
-        "rm $SNAPSHOTCONFIGEX\n"
+        "sed 's/ReplaceWithSNSARN/",{ "Ref": "StopStartSnapServerSNS" },"/' $SNAPSHOTCONFIGEX > $SNAPSHOTCONFIG\n",
+        "rm $SNAPSHOTCONFIGEX\n",
         "wget -O $SNAPSHOT https://raw.githubusercontent.com/uturndata/Public/master/makesnapshots.py\n",
         "chown ec2-user:ec2-user $SNAPSHOT\n",
         "chmod 644 $SNAPSHOT\n",
@@ -161,7 +160,8 @@
                     "ec2:DescribeTags",
                     "ec2:DescribeVolumeAttribute",
                     "ec2:DescribeVolumeStatus",
-                    "ec2:DescribeVolumes"
+                    "ec2:DescribeVolumes",
+                    "sns:Publish"
 				          ], 
                   "Effect": "Allow", 
                   "Resource": "*"
