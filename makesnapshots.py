@@ -150,7 +150,7 @@ for vol in vols:
         count_total += 1
         logging.info(vol)
         tags_volume = get_resource_tags(vol.id)
-        description = '%(period)s_snapshot %(vol_id)s_%(period)s_%(date_suffix)s by snapshot script at %(date)s' % {
+        description = '%(period)s_snapshot %(vol_id)s_%(period)s_%(date_suffix)s on %(date)s' % {
             'period': period,
             'vol_id': vol.id,
             'date_suffix': date_suffix,

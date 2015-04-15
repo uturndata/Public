@@ -1,12 +1,12 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Launch an EC2 Operator to perform auto-start and auto-stop instances in the same region.",
+  "Description" : "Launch an EC2 instance to perform auto-start, auto-stop instances and Snapshot ebs volumes in the same region.",
   "Parameters" : {
     "UtilSubnet" :{
        "Description" : "subnet ID for instance to run",
         "Type" : "String",
-      "Default" : "subnet-c8bb38ba"
+      "Default" : "subnet-c8bb38bf"
     },
   	"InstanceType" : {
         "Description" : "Instance type for the EC2 Operator",
@@ -17,15 +17,20 @@
   	"KeyName" : {
         "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
         "Type" : "String",
-  	   "Default" : "your-keys"
+  	   "Default" : "uturn-prod"
     },
     "DefaultSG" : {
-        "Description" : "Default Security Group ID",
+        "Description" : "Security GroupID for instance",
         "Type": "String",
-        "Default" : "sg-082ae86a"
+        "Default" : "sg-f6ff2892"
+    },
+    "EmailSNSAlarm" : {
+            "Description" : "List of Valid Emails for System alarms",
+            "Type": "String",
+            "Default" : "No@Email.org"
     },
     "AmiID" : {
-        "Description" : "Ami to user for Instance",
+        "Description" : "AmiID for Instance",
         "Type": "String",
         "Default" : "ami-146e2a7c"
     }
@@ -51,11 +56,7 @@
           },
           {
             "Key" : "Role",
-            "Value" : "Util"
-          },
-          {
-            "Key" : "Environment",
-            "Value" : "Prod"
+            "Value" : "Utility"
           }
         ],
   		  "UserData"     : { "Fn::Base64" : { "Fn::Join" : ["", [
@@ -71,6 +72,7 @@
         "SNAPSHOTCONFIG=/home/ec2-user/config.py\n",
         "SNAPSHOT=/home/ec2-user/makesnapshots.py\n",
         "wget -O $SNAPSHOTCONFIG https://raw.githubusercontent.com/uturndata/Public/master/config.py\n",
+        "echo \"'arn': '", { "Ref": "StopStartSnapServerSNS" },"'\" > /home/ec2-user/makesnapshots.log 2>&1\" >> $SNAPSHOTCONFIG\n",
         "wget -O $SNAPSHOT https://raw.githubusercontent.com/uturndata/Public/master/makesnapshots.py\n",
         "chown ec2-user:ec2-user $SNAPSHOT\n",
         "chmod 644 $SNAPSHOT\n",
@@ -91,6 +93,36 @@
       }, 
       "Type": "AWS::IAM::InstanceProfile"
     }, 	
+    "StopStartSnapServerDown": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+                "AlarmDescription": "Server not available",
+                "MetricName": "StatusCheckFailed",
+                "Namespace": "AWS/EC2",
+                "Statistic": "Average",
+                "Period": "300",
+                "EvaluationPeriods": "1",
+                "Threshold": "1",
+                "AlarmActions": [ { "Ref": "StopStartSnapServerSNS" } ],
+                "InsufficientDataActions" : [ { "Ref": "StopStartSnapServerSNS" } ],
+                "Dimensions": [
+                    {
+                        "Name" : "InstanceId",
+                        "Value" :  { "Ref" : "OperatorInstance" }
+                    }
+                ],
+                "ComparisonOperator": "GreaterThanThreshold"
+            }
+    },
+    "StopStartSnapServerSNS" : {
+            "Type" : "AWS::SNS::Topic",
+            "Properties" : {
+                "Subscription" : [ {
+                    "Endpoint" : { "Ref" : "EmailSNSAlarm" },
+                    "Protocol" : "email"
+                }]
+            }
+    },
     "OperatorRole": {
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -144,7 +176,7 @@
   "Outputs" : {
     "OperatorInstanceId" : {
       "Value" : { "Ref" : "OperatorInstance" },
-      "Description" : "Instance Id of the ec2 operator instance"
+      "Description" : "Instance Id of the ec2 instance"
     }
 	
   }
