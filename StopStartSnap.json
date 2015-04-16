@@ -93,7 +93,7 @@
   		  "chown ec2-user:ec2-user $OPERATOR\n",
   		  "chmod 644 $OPERATOR\n",
   		  "echo \"*/5 * * * * ec2-user python $OPERATOR > /home/ec2-user/ec2_operator.log 2>&1\" >> /etc/crontab\n",
-        "#Start Snapshot install\n"
+        "#Start Snapshot install\n",
         "pip install boto\n",
         "SNAPSHOTCONFIG=/home/ec2-user/config.py\n",
         "SNAPSHOTCONFIGEX=/home/ec2-user/config.ex\n",
@@ -105,13 +105,14 @@
         "sed 's/DayCount/",{ "Ref": "DayNumber" },"/' $SNAPSHOTCONFIGEX > $SNAPSHOTCONFIG\n",
         "sed 's/WeekCount/",{ "Ref": "WeekNumber" },"/' $SNAPSHOTCONFIG > $SNAPSHOTCONFIGEX\n",
         "sed 's/MonthCount/",{ "Ref": "MonthNumber" },"/' $SNAPSHOTCONFIGEX > $SNAPSHOTCONFIG\n",
-        "$rm $SNAPSHOTCONFIGEX\n",
+        "rm $SNAPSHOTCONFIGEX\n",
         "wget -O $SNAPSHOT https://raw.githubusercontent.com/uturndata/Public/master/makesnapshots.py\n",
         "chown ec2-user:ec2-user $SNAPSHOT\n",
         "chmod 644 $SNAPSHOT\n",
         "echo \"30 1 * * 1-5 ec2-user python $SNAPSHOT day > /home/ec2-user/makesnapshots.log 2>&1\" >> /etc/crontab\n",
         "echo \"30 2 * * 6 ec2-user python $SNAPSHOT week > /home/ec2-user/makesnapshots.log 2>&1\" >> /etc/crontab\n",
-        "echo \"30 3 1 * * ec2-user python $SNAPSHOT month > /home/ec2-user/makesnapshots.log 2>&1\" >> /etc/crontab\n"
+        "echo \"30 3 1 * * ec2-user python $SNAPSHOT month > /home/ec2-user/makesnapshots.log 2>&1\" >> /etc/crontab\n",
+        "yum -y update /n"
   		  ]]}}
 	     }
     },
