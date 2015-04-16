@@ -16,9 +16,9 @@ config = {
 
     # Number of snapshots to keep (the older ones are going to be deleted,
     # since they cost money).
-    'keep_day': 7,
-    'keep_week': 5,
-    'keep_month': 13,
+    'keep_day': DayNumber,
+    'keep_week': WeekNumber,
+    'keep_month': MonthNumber,
 
     # Path to the log for this script
     'log_file': '/tmp/makesnapshots.log',

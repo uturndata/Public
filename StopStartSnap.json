@@ -8,6 +8,31 @@
         "Type" : "String",
       "Default" : "subnet-c8bb38bf"
     },
+    "Region" :{
+       "Description" : "Region",
+        "Type" : "String",
+      "Default" : "us-east-1"
+    },
+    "APIEndpoint" :{
+       "Description" : "End Point for boto api",
+        "Type" : "String",
+      "Default" : "ec2.us-east-1.amazonaws.com"
+    },
+     "DayNumber" :{
+       "Description" : "The number of Days of Snapshots to retain",
+        "Type" : "Number",
+      "Default" : "7"
+    },
+    "WeekNumber" :{
+       "Description" : "The number of weeks of Snapshots to retain",
+        "Type" : "Number",
+      "Default" : "5"
+    },
+    "MonthNumber" :{
+       "Description" : "The number of months of Snapshots to retain",
+        "Type" : "Number",
+      "Default" : "13"
+    },
   	"InstanceType" : {
         "Description" : "Instance type for the EC2 Operator",
         "Type" : "String",
@@ -73,8 +98,8 @@
         "SNAPSHOTCONFIGEX=/home/ec2-user/config.ex\n",
         "SNAPSHOT=/home/ec2-user/makesnapshots.py\n",
         "wget -O $SNAPSHOTCONFIGEX https://raw.githubusercontent.com/uturndata/Public/master/config.py\n",
-        "sed 's/ReplaceWithSNSARN/",{ "Ref": "StopStartSnapServerSNS" },"/' $SNAPSHOTCONFIGEX > $SNAPSHOTCONFIG\n",
-        "rm $SNAPSHOTCONFIGEX\n",
+        "sed  -i 's/ReplaceWithSNSARN/",{ "Ref": "StopStartSnapServerSNS" },"/' $SNAPSHOTCONFIGEX \n",
+        "$rm $SNAPSHOTCONFIGEX\n",
         "wget -O $SNAPSHOT https://raw.githubusercontent.com/uturndata/Public/master/makesnapshots.py\n",
         "chown ec2-user:ec2-user $SNAPSHOT\n",
         "chmod 644 $SNAPSHOT\n",
